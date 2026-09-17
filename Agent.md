@@ -1,30 +1,7 @@
 # UX Research Agent
 ## Capstone Project Plan
 
----
 
-## The Problem
-
-UX researchers manually gather insights from scattered sources:
-- Interviews
-- Podcasts  
-- Reddit discussions
-- Articles
-
-Then manually synthesize into findings.
-
-**Result:** Fragmented output
-- Raw observations in one place
-- Themes elsewhere
-- Personas in spreadsheet
-- Hypotheses as notes
-
-Manual copy-pasting at each step.
-Research insights never reach design team.
-
----
-
-## The Idea
 
 **UX Research Agent** automates three things:
 
