@@ -1,3 +1,446 @@
+# UX Research Agent
+
+A Claude Agent SDK script (`agent.py`) that runs the full UX research workflow below end to end: gather real web sources, extract observations, cluster into themes, run the 3-Lens framework, build personas, write problem statements, synthesize hypotheses, validate, and write 8 hand-off files to disk.
+
+Drop this file into your repo (e.g. as `AGENT.md`) for reference and hand-off — the runnable code is the Python block in [Section 2](#2-agentpy). The agent doesn't hard-code the workflow: `agent.py` loads the workflow definition below as its own system prompt at runtime, so editing the definition changes the agent's behavior without touching the Python.
+
+## Contents
+
+1. [Setup](#1-setup)
+2. [agent.py](#2-agentpy)
+3. [requirements.txt](#3-requirementstxt)
+4. [Workflow Definition (WORKFLOW.md)](#4-workflow-definition-workflowmd)
+
+---
+
+## 1. Setup
+
+This script needs its own copy of the workflow definition on disk. Save Section 4 below as **`WORKFLOW.md`** in the same folder as `agent.py` (copy everything between the section's fenced block), save Section 2 as `agent.py`, and Section 3 as `requirements.txt`.
+
+```bash
+# Python dependency (the SDK itself)
+pip install -r requirements.txt
+
+# Node.js 18+ (check first)
+node --version   # if missing: https://nodejs.org
+
+# uv / uvx
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Claude Code CLI, used under the hood by the SDK — log in once
+npm install -g @anthropic-ai/claude-code
+claude login
+# (or set ANTHROPIC_API_KEY in your environment instead of logging in)
+```
+
+Verify setup with no API calls:
+
+```bash
+python agent.py --check
+```
+
+Then run it:
+
+```bash
+python agent.py
+# or override the topic:
+python agent.py --topic "onboarding flows for habit-tracking apps" \
+                 --scope "iOS/Android consumer apps; first 7 days of use"
+```
+
+Outputs land in `output/<topic-slug>/`: `research_findings_report.md` plus 7 structured JSON files. Full flag list: `python agent.py --help`.
+
+---
+
+## 2. agent.py
+
+```python
+#!/usr/bin/env python3
+"""
+UX Research Agent — driver script for the "Lost in the Inbox" capstone pivot.
+
+This script operationalizes WORKFLOW.md (the full STEP 1-9 research process:
+gather -> extract -> cluster -> 3-Lens analysis -> personas/problem
+statements/hypotheses -> validation gate -> finalize) using the Claude Agent
+SDK. It does not hard-code the workflow logic in Python: WORKFLOW.md IS the
+agent's system prompt, so editing that file changes the agent's behaviour
+without touching this script.
+
+WHAT THIS SCRIPT DOES
+----------------------
+1. Reads WORKFLOW.md (must sit next to this file).
+2. Spins up two MCP servers as child processes:
+     - `fetch`      (uvx mcp-server-fetch)        -> real web retrieval
+     - `filesystem` (npx @modelcontextprotocol/server-filesystem <output dir>)
+                                                   -> sandboxes all writes to
+                                                      the run's output folder
+3. Starts a Claude Agent SDK session whose system prompt is WORKFLOW.md,
+   restricted to ONLY those two MCP tools (plus TodoWrite for the agent's own
+   step tracking) so every finding is traceable to a real fetched URL, per
+   the brief's "No Hallucination" principle.
+4. Streams the run to your terminal (which step it's on, every tool call,
+   every file it writes) and appends a one-line entry to BUILD_LOG.md when
+   it's done.
+5. Checks the output folder against the 8-file structure STEP 9 requires and
+   prints a pass/fail checklist.
+
+PREREQUISITES (one-time setup)
+-------------------------------
+  pip install -r requirements.txt
+  npm install -g node        # you need Node.js + npx on PATH (node >= 18)
+  # uv/uvx: https://docs.astral.sh/uv/getting-started/installation/
+  # Auth: either run `claude login` once (uses your Claude Code login), or
+  #       set the ANTHROPIC_API_KEY environment variable.
+
+USAGE
+-----
+  # Use the default topic (Design Brief 5: Parental Awareness)
+  python agent.py
+
+  # Research a different topic
+  python agent.py --topic "onboarding flows for habit-tracking apps" \\
+                   --scope "iOS/Android consumer apps; first 7 days of use"
+
+  # Just verify your machine is set up correctly, no API calls made
+  python agent.py --check
+
+  # Resume a run that got cut off (uses the session id printed at the top
+  # of the previous run's log)
+  python agent.py --resume <session-id>
+
+Full flag list: python agent.py --help
+"""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import datetime as dt
+import os
+import re
+import shutil
+import sys
+from pathlib import Path
+from typing import Any
+
+from claude_agent_sdk import (
+    AssistantMessage,
+    ClaudeAgentOptions,
+    ResultMessage,
+    SystemMessage,
+    TextBlock,
+    ToolResultBlock,
+    ToolUseBlock,
+    query,
+)
+
+# --------------------------------------------------------------------------
+# Defaults tied to Design Brief 5: Parental Awareness (FLAME coursework).
+# Override any of these from the CLI — nothing below is load-bearing for
+# other research topics.
+# --------------------------------------------------------------------------
+DEFAULT_TOPIC = (
+    "How parents stay meaningfully informed about their child's school life "
+    "amid a weekly overload of photos, messages, reminders, homework "
+    "updates, and notices from school apps"
+)
+DEFAULT_SCOPE = (
+    "In scope: parents of school-age children who receive digital "
+    "updates from school apps/platforms; academic, behavioural, and "
+    "emotional signals about their child; mobile-only experience; "
+    "information prioritisation, clarity, and interpretation. "
+    "Out of scope: redesigning how teachers author or send updates; "
+    "turning the experience into a messaging feed or social stream; "
+    "any change that weakens school-parent privacy/trust boundaries."
+)
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+WORKFLOW_PATH = SCRIPT_DIR / "WORKFLOW.md"
+
+# The 8 artifacts STEP 9 of the workflow says a finished run must produce.
+EXPECTED_OUTPUT_FILES = [
+    "research_findings_report.md",
+    "raw_observations.json",
+    "themes_ranked.json",
+    "behavioral_personas.json",
+    "problem_statements.json",
+    "user_goals_decisions.json",
+    "curated_quotes.json",
+    "hypotheses_with_recommendations.json",
+]
+
+ALLOWED_TOOLS = [
+    "mcp__fetch__fetch",
+    "mcp__filesystem__read_file",
+    "mcp__filesystem__read_multiple_files",
+    "mcp__filesystem__write_file",
+    "mcp__filesystem__edit_file",
+    "mcp__filesystem__create_directory",
+    "mcp__filesystem__list_directory",
+    "mcp__filesystem__directory_tree",
+    "mcp__filesystem__search_files",
+    "mcp__filesystem__get_file_info",
+    "mcp__filesystem__list_allowed_directories",
+    "TodoWrite",
+]
+
+# Force the agent through the MCP servers the brief specifies, instead of
+# letting it fall back on the CLI's own built-in web/file tools — that's
+# what makes "no hallucinated sources" checkable.
+DISALLOWED_TOOLS = ["WebFetch", "WebSearch", "Bash", "Write", "Edit", "Read", "Task"]
+
+
+def slugify(text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug[:60] or "research-topic"
+
+
+def check_prerequisites() -> bool:
+    """Verify the local machine has everything the MCP servers need.
+    Makes no network calls and starts no Claude session."""
+    ok = True
+
+    def report(label: str, found: bool, hint: str) -> None:
+        nonlocal ok
+        mark = "OK" if found else "MISSING"
+        print(f"  [{mark:7}] {label}")
+        if not found:
+            ok = False
+            print(f"           -> {hint}")
+
+    print("Checking prerequisites...\n")
+    report(
+        "WORKFLOW.md present next to agent.py",
+        WORKFLOW_PATH.exists(),
+        f"Expected at {WORKFLOW_PATH}",
+    )
+    report(
+        "node / npx on PATH",
+        shutil.which("npx") is not None,
+        "Install Node.js 18+ from https://nodejs.org",
+    )
+    report(
+        "uvx on PATH",
+        shutil.which("uvx") is not None,
+        "Install uv: https://docs.astral.sh/uv/getting-started/installation/",
+    )
+    report(
+        "claude CLI on PATH",
+        shutil.which("claude") is not None,
+        "npm install -g @anthropic-ai/claude-code",
+    )
+    has_key = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    report(
+        "Authenticated (ANTHROPIC_API_KEY set, or run `claude login`)",
+        has_key or shutil.which("claude") is not None,
+        "Set ANTHROPIC_API_KEY, or run `claude login` once.",
+    )
+    print()
+    print("All good — you can run a real research pass." if ok else
+          "Fix the MISSING items above before running a real pass.")
+    return ok
+
+
+def build_system_prompt() -> str:
+    workflow_md = WORKFLOW_PATH.read_text(encoding="utf-8")
+    return (
+        "You are the UX Research Agent described below. Follow this workflow "
+        "definition exactly, in order, without skipping steps. You have "
+        "access to exactly two tool families: `mcp__fetch__fetch` for all "
+        "web retrieval, and `mcp__filesystem__*` for all reading/writing, "
+        "scoped to this run's output directory. Never invent a source, "
+        "quote, or observation — if you cannot fetch enough real sources, "
+        "say so explicitly in the research brief rather than fabricating "
+        "data. Use TodoWrite to track your progress through STEP 1-9 so the "
+        "person running you can see which step you're on.\n\n"
+        "=== WORKFLOW DEFINITION (WORKFLOW.md) ===\n\n" + workflow_md
+    )
+
+
+def build_initial_prompt(topic: str, scope: str, output_dir: Path, max_sources: int) -> str:
+    return (
+        f"RESEARCH TOPIC: {topic}\n\n"
+        f"SCOPE: {scope}\n\n"
+        f"Begin at STEP 1 of the workflow and proceed through STEP 9. "
+        f"Fetch {max_sources} real sources in STEP 2 (interviews, Reddit "
+        f"threads, articles, podcast show notes/transcripts, or public "
+        f"posts by UX professionals — whatever is actually reachable via "
+        f"mcp__fetch__fetch; do not pad the count with sources you did not "
+        f"retrieve). Write every deliverable from STEP 9's file structure "
+        f"into the directory the filesystem tool is rooted at, using "
+        f"exactly these file names: "
+        + ", ".join(EXPECTED_OUTPUT_FILES)
+        + ". Run the STEP 8 validation gate yourself before finalizing, and "
+        "note in research_findings_report.md's final section whether it "
+        "passed on the first attempt or needed revision. When STEP 9 is "
+        "complete, reply with a short plain-text summary of the top themes "
+        "and hypotheses so a human skimming the terminal gets the gist "
+        "without opening the files."
+    )
+
+
+def mcp_servers_config(output_dir: Path) -> dict[str, Any]:
+    return {
+        "fetch": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": ["mcp-server-fetch"],
+        },
+        "filesystem": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                str(output_dir),
+            ],
+        },
+    }
+
+
+def _short(value: Any, limit: int = 140) -> str:
+    text = value if isinstance(value, str) else repr(value)
+    text = " ".join(text.split())
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+async def run_agent(args: argparse.Namespace) -> int:
+    output_dir = Path(args.output_dir).resolve()
+    if not args.resume:
+        output_dir = output_dir / slugify(args.topic)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    options = ClaudeAgentOptions(
+        system_prompt=build_system_prompt(),
+        mcp_servers=mcp_servers_config(output_dir),
+        allowed_tools=ALLOWED_TOOLS,
+        disallowed_tools=DISALLOWED_TOOLS,
+        permission_mode="bypassPermissions",
+        cwd=str(output_dir),
+        max_turns=args.max_turns,
+        model=args.model,
+        resume=args.resume,
+    )
+
+    prompt = build_initial_prompt(args.topic, args.scope, output_dir, args.max_sources)
+
+    print(f"Output directory : {output_dir}")
+    print(f"Max turns        : {args.max_turns}")
+    print(f"Model            : {args.model or '(CLI default)'}")
+    print("-" * 72)
+
+    session_id: str | None = None
+    result: ResultMessage | None = None
+
+    async for message in query(prompt=prompt, options=options):
+        if isinstance(message, SystemMessage) and message.subtype == "init":
+            session_id = message.data.get("session_id")
+            print(f"[session {session_id}] connected to MCP servers: "
+                  f"{list(message.data.get('mcp_servers', {}))}")
+
+        elif isinstance(message, AssistantMessage):
+            for block in message.content:
+                if isinstance(block, TextBlock) and block.text.strip():
+                    print(block.text.strip())
+                elif isinstance(block, ToolUseBlock):
+                    print(f"  -> {block.name}({_short(block.input)})")
+
+        elif isinstance(message, ToolResultBlock):
+            # Surfaces at top level only with include_partial_messages;
+            # normally arrives nested in a UserMessage, but handle either.
+            status = "ERROR" if message.is_error else "ok"
+            print(f"     [{status}] {_short(message.content)}")
+
+        elif isinstance(message, ResultMessage):
+            result = message
+
+    print("-" * 72)
+    if result:
+        print(f"Turns: {result.num_turns}  "
+              f"Cost: ${result.total_cost_usd:.4f}" if result.total_cost_usd else
+              f"Turns: {result.num_turns}")
+        if result.is_error:
+            print(f"Agent reported an error: {result.result}")
+        if result.session_id:
+            print(f"Session id (for --resume): {result.session_id}")
+
+    ok = verify_outputs(output_dir)
+    write_build_log(args, output_dir, session_id or (result.session_id if result else None), ok)
+    return 0 if ok else 1
+
+
+def verify_outputs(output_dir: Path) -> bool:
+    print("\nOutput checklist:")
+    all_ok = True
+    for name in EXPECTED_OUTPUT_FILES:
+        exists = (output_dir / name).exists()
+        all_ok &= exists
+        print(f"  [{'x' if exists else ' '}] {name}")
+    print("\nAll 8 STEP 9 deliverables present." if all_ok else
+          "Some deliverables are missing — re-run (optionally with --resume) "
+          "or ask the agent to finish STEP 9.")
+    return all_ok
+
+
+def write_build_log(args: argparse.Namespace, output_dir: Path, session_id: str | None, ok: bool) -> None:
+    log_path = Path(args.build_log)
+    timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    status = "PASS" if ok else "INCOMPLETE"
+    entry = (
+        f"- {timestamp} — agent.py run [{status}] — topic: \"{args.topic}\" "
+        f"— output: {output_dir} — session: {session_id or 'n/a'}\n"
+    )
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(entry)
+    print(f"\nLogged this run to {log_path}")
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="UX Research Agent — runs WORKFLOW.md end to end via the Claude Agent SDK.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--topic", default=DEFAULT_TOPIC, help="Research topic (STEP 1).")
+    parser.add_argument("--scope", default=DEFAULT_SCOPE, help="Scope boundaries (STEP 1).")
+    parser.add_argument("--output-dir", default="output", help="Base directory for run outputs.")
+    parser.add_argument("--max-sources", type=int, default=8, help="Sources to fetch in STEP 2 (brief asks for 6-10).")
+    parser.add_argument("--max-turns", type=int, default=80, help="Hard cap on agent turns for this run.")
+    parser.add_argument("--model", default=None, help="Override model (default: your Claude Code CLI default).")
+    parser.add_argument("--resume", default=None, help="Session id to resume an interrupted run.")
+    parser.add_argument("--build-log", default="BUILD_LOG.md", help="Path to append a one-line run summary to.")
+    parser.add_argument("--check", action="store_true", help="Verify local setup only; makes no API calls.")
+    return parser.parse_args(argv)
+
+
+def main() -> None:
+    args = parse_args()
+    if args.check:
+        sys.exit(0 if check_prerequisites() else 1)
+    if not WORKFLOW_PATH.exists():
+        print(f"ERROR: {WORKFLOW_PATH} not found. Keep WORKFLOW.md next to agent.py.")
+        sys.exit(1)
+    sys.exit(asyncio.run(run_agent(args)))
+
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## 3. requirements.txt
+
+```
+claude-agent-sdk>=0.1.73
+```
+
+---
+
+## 4. Workflow Definition (WORKFLOW.md)
+
+Save everything inside this fenced block as a separate file named `WORKFLOW.md`, next to `agent.py`. This is the document `agent.py` reads at runtime and uses as its system prompt — edit it to change what the agent does.
+
+````markdown
 # UX Research Agent - Complete Workflow Definition
 
 ## Overview
@@ -854,3 +1297,4 @@ END:
 ---
 
 **This workflow is ready to be packaged into a custom Claude Skill (`ux-research` Skill) and driven by an agent.py script using the Claude Agent SDK.**
+````
