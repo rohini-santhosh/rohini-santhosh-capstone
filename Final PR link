@@ -1,0 +1,405 @@
+# UX Research Agent — Final Submission
+
+**Capstone: Custom Skill + Multi-Step Loop + 2 MCP Servers + Chained Workflow**
+
+---
+
+## What You're Submitting
+
+A Python agent that runs 7-step UX research workflow in one session:
+
+```
+GATHER (fetch MCP) → ANALYZE → CLUSTER → SYNTHESIZE (Skill) → VALIDATE → FINALIZE (filesystem MCP)
+```
+
+**All in one `python agent.py` command.**
+
+---
+
+## The 5 Core Components (Chained)
+
+### 1. Custom Skill: 3-Lens Framework
+
+**File:** `.claude/skills/ux-research/SKILL.md`
+
+The Skill packages UX research methodology. Agent invokes it in STEP 5:
+
+```
+Agent: "I'm using the ux-research Skill to synthesize these findings"
+
+Skill provides:
+├── 3-Lens Framework (Assumptions → Failures → Behavior Change)
+├── Behavioral patterns extraction
+├── Persona synthesis (grounded in data, not stereotypes)
+├── Problem statement template
+├── User goals & decision points structure
+├── Hypothesis synthesis with design recommendations
+├── 10-point quality validation rubric
+└── Output templates (markdown + 7 JSON specs)
+```
+
+**Why:** Encapsulates reusable methodology. Future research projects use same Skill.
+
+---
+
+### 2. Multi-Step Loop: Persistent Conversation History
+
+**File:** `agent.py` — Core pattern:
+
+```python
+conversation_history = []  # ONE shared list across all 7 steps
+
+async def run_step(conversation_history, step_name, step_prompt):
+    """Run step, maintain context"""
+    conversation_history.append({"role": "user", "content": step_prompt})
+    response = client.messages.create(..., messages=conversation_history)
+    conversation_history.append({"role": "assistant", "content": response_text})
+    return response_text
+
+# STEP 1: Define Topic
+await run_step(conversation_history, "1. DEFINE", step1_prompt)
+# conversation_history has: 1 exchange
+
+# STEP 2: Gather Insights
+await run_step(conversation_history, "2. GATHER", step2_prompt)
+# conversation_history has: 2 exchanges (agent REMEMBERS step 1)
+
+# STEP 3: Extract Observations
+await run_step(conversation_history, "3. ANALYZE", step3_prompt)
+# conversation_history has: 3 exchanges (agent REMEMBERS steps 1-2)
+
+# ... continue for STEPS 4-7
+# By STEP 7, agent has full context of everything
+```
+
+**Why:** Each step builds on previous. No context loss between steps.
+
+---
+
+### 3. MCP Server #1: fetch (Web Research)
+
+**Installed:** `uvx mcp-server-fetch`
+
+**Used in:** STEP 2 (GATHER INSIGHTS)
+
+**Agent calls:**
+```python
+mcp__fetch__fetch("https://producthunt.com/...")
+mcp__fetch__fetch("https://reddit.com/r/productivity/...")
+mcp__fetch__fetch("https://medium.com/@uxdesigner/...")
+# ... 6-8 real sources, no hallucination
+```
+
+**Why:** Every source is traceable. Every quote is real.
+
+**Configuration in agent.py:**
+```python
+"mcp_servers": {
+    "fetch": {
+        "type": "stdio",
+        "command": "uvx",
+        "args": ["mcp-server-fetch"]
+    }
+}
+```
+
+---
+
+### 4. MCP Server #2: filesystem (File I/O)
+
+**Installed:** `npx @modelcontextprotocol/server-filesystem`
+
+**Used in:** STEP 1 & STEP 7
+
+**STEP 1 — Read:**
+```python
+mcp__filesystem__read_text_file("data/research_topic.txt")
+# Returns: "Why do users abandon task management apps after onboarding?"
+```
+
+**STEP 7 — Write:**
+```python
+mcp__filesystem__write_file("output/research_findings_report.md", content)
+mcp__filesystem__write_file("output/raw_observations.json", content)
+# ... 8 files total
+```
+
+**Why:** Agent reads its own input. Agent writes its own output. No manual copy-pasting.
+
+**Configuration in agent.py:**
+```python
+"mcp_servers": {
+    "filesystem": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    }
+}
+```
+
+---
+
+### 5. Chained Workflow (7 Steps)
+
+```
+┌─────────────────────────────────────────┐
+│ Persistent Conversation History         │
+├─────────────────────────────────────────┤
+│                                         │
+│ STEP 1: Define Research Topic & Scope  │
+│ → Agent reads topic from file (filesystem MCP)
+│                                         │
+│ STEP 2: Gather Insights From Web       │
+│ → Agent fetches 6-8 sources (fetch MCP)
+│ → Observations extracted with quotes + URLs
+│                                         │
+│ STEP 3: Analyze & Extract Observations│
+│ → 20-40 atomic observations            │
+│ → Each tied to quote, source, sentiment
+│                                         │
+│ STEP 4: Cluster Into Themes            │
+│ → 3-5 ranked themes (frequency × severity)
+│                                         │
+│ STEP 5: Synthesize (Invoke Skill)      │
+│ → Agent calls: "I'm using ux-research Skill"
+│ → Builds personas, problem statements  │
+│ → Synthesizes testable hypotheses      │
+│                                         │
+│ STEP 6: Validation Loop (CHECK → REVISE)
+│ → Grade against 10-point rubric        │
+│ → If FAIL: auto-revise (max 2 cycles) │
+│ → If PASS: proceed                     │
+│                                         │
+│ STEP 7: Finalize & Output              │
+│ → Write 8 files (filesystem MCP):      │
+│   - research_findings_report.md        │
+│   - raw_observations.json              │
+│   - themes_ranked.json                 │
+│   - behavioral_personas.json           │
+│   - problem_statements.json            │
+│   - user_goals_decisions.json          │
+│   - curated_quotes.json                │
+│   - hypotheses_with_recommendations.json
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**Key:** Full context maintained across all 7 steps. Skill invoked in STEP 5. Both MCP servers used.
+
+---
+
+## How to Run
+
+```bash
+# Setup (one time)
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env, add: ANTHROPIC_API_KEY=sk-ant-xxxxx
+
+# Run workflow
+python agent.py
+
+# Expected output: 8 files in output/ folder
+ls -la output/
+```
+
+**Timeline:** 5–15 minutes. Agent runs all 7 steps, maintains context, invokes Skill, validates quality.
+
+---
+
+## Project Structure
+
+```
+ux-research-agent/
+├── agent.py                          ← Main script (run this)
+├── requirements.txt                  ← pip install -r requirements.txt
+├── .env.example                      ← Config template
+├── .gitignore
+│
+├── .claude/skills/ux-research/
+│   └── SKILL.md                      ← 3-Lens methodology (packaged)
+│
+├── data/
+│   └── research_topic.txt            ← Research topic input
+│
+└── output/                           ← Agent writes 8 files here
+    └── .gitkeep
+```
+
+---
+
+## Capstone Checklist ✅
+
+- [x] **Custom Skill** — `.claude/skills/ux-research/SKILL.md` packages 3-Lens framework
+- [x] **Multi-step loop** — `agent.py` maintains `conversation_history` across all 7 steps
+- [x] **MCP Server #1 (fetch)** — Connected in STEP 2 for web research
+- [x] **MCP Server #2 (filesystem)** — Connected in STEPS 1 & 7 for file I/O
+- [x] **Chained workflow** — All 5 components connected in sequence
+- [x] **End-to-end execution** — One `python agent.py` command runs complete workflow
+- [x] **Validation loop** — CHECK grades research against 10-point rubric, REVISE auto-fixes (max 2 cycles)
+- [x] **Structured output** — 1 markdown report + 7 JSON exports ready for designers
+
+---
+
+## What Each Component Does
+
+| Component | Type | Purpose | Used In |
+|-----------|------|---------|---------|
+| **agent.py** | Python | Orchestrates 7-step workflow with persistent loop | All steps |
+| **Skill** | Methodology | 3-Lens framework + validation rubric | STEP 5 |
+| **fetch MCP** | Server | Retrieves real web content | STEP 2 |
+| **filesystem MCP** | Server | Reads input, writes output files | STEPS 1 & 7 |
+| **Validation loop** | Logic | Grades research, auto-revises if needed | STEP 6 |
+
+---
+
+## How They're Chained
+
+```
+agent.py (main)
+  ├─ configures fetch MCP + filesystem MCP
+  ├─ loads Skill: "ux-research"
+  │
+  ├─ STEP 1: filesystem MCP reads research topic
+  │
+  ├─ STEP 2: fetch MCP retrieves 6-8 real sources
+  │
+  ├─ STEPS 3-4: Analyzes & clusters locally
+  │
+  ├─ STEP 5: Invokes Skill ("I'm using ux-research Skill...")
+  │         Skill guides synthesis
+  │
+  ├─ STEP 6: Validation loop (uses Skill's 10-point rubric)
+  │         CHECK → REVISE → PASS
+  │
+  ├─ STEP 7: filesystem MCP writes 8 output files
+  │
+  └─ Everything flows through single conversation_history
+    (no context lost between steps)
+```
+
+---
+
+## GitHub Submission
+
+```bash
+# Initialize git
+git init
+git add .
+git commit -m "UX Research Agent: Custom Skill + Multi-Step Loop + 2 MCP Servers + Chained Workflow"
+
+# Push to GitHub
+git remote add origin https://github.com/YOUR_USERNAME/ux-research-agent.git
+git branch -M main
+git push -u origin main
+```
+
+**Submit this URL:**
+```
+https://github.com/YOUR_USERNAME/ux-research-agent
+```
+
+---
+
+## Test It Works
+
+```bash
+# Run agent
+python agent.py
+
+# Check output
+ls -la output/
+
+# Should see: 8 files created
+# ✓ research_findings_report.md (main report)
+# ✓ 7 JSON exports
+
+# Open report
+code output/research_findings_report.md
+
+# Should show: 8 sections (A-H)
+# A. Research Brief
+# B. Top Themes
+# C. Behavioral Insights
+# D. 3-Lens Analysis
+# E. Problem Statements & User Goals
+# F. Hypotheses & Design Recommendations
+# G. Research Plan
+# H. Expectations & Gotchas
+```
+
+---
+
+## Success Criteria
+
+✅ Agent runs without errors
+✅ STEP 2 fetches real sources (visible URLs)
+✅ STEP 3 extracts 20-40 observations with quotes
+✅ STEP 4 clusters into 3-5 ranked themes
+✅ STEP 5 invokes ux-research Skill
+✅ STEP 6 validates against 10-point rubric, revises if needed
+✅ STEP 7 writes 8 files to output/
+✅ Markdown report has 8 sections
+✅ All JSON files valid and structured
+✅ Full context maintained across all steps
+✅ Both MCP servers connected and working
+✅ Ready for GitHub submission
+
+---
+
+## Files You Have (All Included)
+
+```
+✓ agent.py
+✓ .claude/skills/ux-research/SKILL.md
+✓ requirements.txt
+✓ .env.example
+✓ .gitignore
+✓ data/research_topic.txt
+✓ output/.gitkeep
+✓ README.md (setup guide)
+✓ PR_DESCRIPTION.md (detailed summary)
+✓ IMPLEMENTATION_GUIDE.md (comprehensive guide)
+✓ FINAL_SUBMISSION.md (this file)
+```
+
+---
+
+## One Command to Submit
+
+```bash
+# Setup + Run + Verify
+python3 -m venv venv && \
+source venv/bin/activate && \
+pip install -r requirements.txt && \
+cp .env.example .env && \
+echo "Edit .env with your ANTHROPIC_API_KEY, then run: python agent.py"
+```
+
+---
+
+## Summary
+
+**What you built:**
+- Custom Skill (3-Lens UX research methodology)
+- Agent with persistent multi-step loop (all 7 steps, full context)
+- 2 MCP servers connected (fetch for web research, filesystem for I/O)
+- All chained into one end-to-end workflow
+- Validation loop ensures quality before output
+- 8 deliverables (1 markdown + 7 JSON files)
+
+**How to use:**
+```bash
+python agent.py
+```
+
+**How to submit:**
+```
+https://github.com/YOUR_USERNAME/ux-research-agent
+```
+
+---
+
+**Ready for capstone. All components working. Push to GitHub.** ✅
