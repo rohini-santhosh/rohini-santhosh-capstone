@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Narra — UX Research Library</title>
+  <meta name="description" content="A library of hand-off-ready UX research reports — gathered from real sources, laid out as themes, personas, journeys, and opportunities. No login, no API key." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;400;500&family=Inter:wght@200;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- ================= WIZARD ================= -->
+    <div id="view-wizard">
+
+      <!-- Step: cover -->
+      <section class="wz-step wz-cover" data-step="cover">
+        <a class="wz-corner-link" href="#" data-goto-library>Browse past reports</a>
+        <div class="wz-cover-inner">
+          <div class="wz-brand-row">
+            <img class="wz-logo wz-spin" src="assets/narra-logo.png" alt="" />
+            <h1 class="wz-title">Introducing Narra</h1>
+          </div>
+          <p class="wz-tagline">Turn data into insights</p>
+          <button type="button" class="wz-cta" data-next="solve">
+            <span>Start a project</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 18L18 6M18 6H9M18 6V15" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Step: solve -->
+      <section class="wz-step wz-solve" data-step="solve" hidden>
+        <button type="button" class="wz-back" data-prev="cover">‹ back</button>
+        <div class="wz-solve-inner">
+          <div class="wz-brand-row wz-brand-row-sm">
+            <img class="wz-logo wz-spin" src="assets/narra-logo.png" alt="" />
+            <h1 class="wz-title wz-title-sm">What are we trying to solve?</h1>
+          </div>
+          <form class="wz-form" id="wz-solve-form">
+            <label class="wz-field">
+              <span class="wz-field-label">Research topic/brief:</span>
+              <input class="wz-input" type="text" id="wz-topic" maxlength="300" placeholder="UX Problem" required />
+            </label>
+            <label class="wz-field">
+              <span class="wz-field-label">What do you need it for?</span>
+              <input class="wz-input" type="text" id="wz-need" maxlength="300" placeholder="Objective of this research" />
+            </label>
+            <label class="wz-field">
+              <span class="wz-field-label">Who experiences this problem?</span>
+              <input class="wz-input" type="text" id="wz-who" maxlength="300" placeholder="Target user" />
+            </label>
+          </form>
+          <button type="button" class="wz-cta wz-cta-corner" data-next="plan">
+            <span>Next</span><span>›</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Step: plan -->
+      <section class="wz-step wz-plan" data-step="plan" hidden>
+        <button type="button" class="wz-back wz-back-light" data-prev="solve">‹ back</button>
+        <div class="wz-brand-row">
+          <img class="wz-logo" src="assets/narra-logo.png" alt="" style="width:60px;height:60px" />
+          <h1 class="wz-title wz-title-md">Choose your Research Plan</h1>
+        </div>
+        <div class="wz-pill-grid" id="wz-plan-grid"></div>
+        <a href="#" class="wz-other-link" data-next="other">
+          <span>Other</span><span>›</span>
+        </a>
+        <button type="button" class="wz-cta wz-cta-corner" data-submit>
+          <span>Next</span><span>›</span>
+        </button>
+      </section>
+
+      <!-- Step: other -->
+      <section class="wz-step wz-other" data-step="other" hidden>
+        <button type="button" class="wz-back" data-prev="plan">‹ back</button>
+        <h1 class="wz-title wz-title-md">Define your approach</h1>
+        <input class="wz-input wz-input-wide" type="text" id="wz-approach" maxlength="300" placeholder="Describe your approach" />
+        <button type="button" class="wz-cta wz-cta-corner" data-submit>
+          <span>Next</span><span>›</span>
+        </button>
+      </section>
+
+      <!-- Step: synth -->
+      <section class="wz-step wz-synth" data-step="synth" hidden>
+        <video class="wz-synth-video" src="assets/synth-loop.mp4" autoplay loop muted playsinline></video>
+        <button type="button" class="wz-back" id="wz-synth-back">‹ back</button>
+        <div class="wz-synth-status" id="wz-synth-status">
+          <span id="wz-synth-label">Synthesizing</span>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="wz-spin-simple"><path d="M21 12a9 9 0 0 0-9-9" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.25)" stroke-width="2"/></svg>
+        </div>
+        <p class="wz-synth-note" id="wz-synth-note" hidden></p>
+        <button type="button" class="wz-cta wz-view-report" id="wz-view-report" hidden>
+          <span>View report</span><span>›</span>
+        </button>
+      </section>
+
+    </div>
+
+    <!-- ================= LIBRARY ================= -->
+    <div id="view-library" class="lib-view" hidden>
+      <button type="button" class="wz-back" data-goto-cover>‹ back</button>
+      <header class="lib-nav">
+        <div class="lib-brand">
+          <img class="wz-logo" src="assets/narra-logo.png" alt="" style="width:36px;height:36px" />
+          <span class="lib-brand-name">Narra</span>
+        </div>
+      </header>
+      <main class="lib-main">
+        <section class="lib-panel">
+          <h2 class="panel-title">Browse research</h2>
+          <div id="library-grid" class="card-grid"></div>
+          <p id="library-empty" class="form-note" hidden>No reports published yet.</p>
+        </section>
+        <section id="lib-results" class="results" hidden></section>
+      </main>
+    </div>
+
+  </div>
+
+  <template id="tpl-library-card">
+    <article class="library-card">
+      <h3 class="library-topic"></h3>
+      <p class="library-scope"></p>
+      <div class="library-actions">
+        <button type="button" class="btn-secondary library-view">View report</button>
+        <a href="#" target="_blank" rel="noopener" class="btn-secondary library-figjam" hidden>View FigJam</a>
+      </div>
+    </article>
+  </template>
+
+  <template id="tpl-quote">
+    <blockquote class="quote-card">
+      <p class="quote-text"></p>
+      <footer><span class="quote-sentiment"></span><a class="quote-source" target="_blank" rel="noopener"></a></footer>
+    </blockquote>
+  </template>
+
+  <template id="tpl-source-item">
+    <li class="source-item">
+      <a class="source-link" target="_blank" rel="noopener"></a>
+      <span class="source-type"></span>
+    </li>
+  </template>
+
+  <template id="tpl-insight-card">
+    <article class="insight-card">
+      <header>
+        <p class="insight-text"></p>
+        <span class="insight-rank"></span>
+      </header>
+      <div class="theme-bar-track"><div class="theme-bar-fill"></div></div>
+      <dl class="theme-meta">
+        <div><dt>Frequency</dt><dd class="insight-freq"></dd></div>
+        <div><dt>Severity</dt><dd class="insight-sev"></dd></div>
+      </dl>
+      <ul class="insight-quotes"></ul>
+    </article>
+  </template>
+
+  <template id="tpl-observation-row">
+    <li class="observation-row">
+      <div class="observation-main">
+        <span class="observation-sentiment"></span>
+        <p class="observation-text"></p>
+      </div>
+      <p class="observation-quote"></p>
+      <a class="observation-source" target="_blank" rel="noopener"></a>
+    </li>
+  </template>
+
+  <template id="tpl-pain-card">
+    <article class="pain-card">
+      <p class="pain-point"></p>
+      <p class="pain-row"><strong>Need:</strong> <span class="pain-need"></span></p>
+      <ul class="pain-evidence"></ul>
+    </article>
+  </template>
+
+  <template id="tpl-pattern-card">
+    <article class="pattern-card">
+      <ol class="pattern-chain">
+        <li><span class="pattern-label">Trigger</span><span class="pattern-trigger"></span></li>
+        <li><span class="pattern-label">Action</span><span class="pattern-action"></span></li>
+        <li><span class="pattern-label">Context</span><span class="pattern-context"></span></li>
+        <li><span class="pattern-label">Outcome</span><span class="pattern-outcome"></span></li>
+      </ol>
+    </article>
+  </template>
+
+  <template id="tpl-persona-card">
+    <article class="persona-card">
+      <header>
+        <h3 class="persona-name"></h3>
+        <p class="persona-archetype"></p>
+      </header>
+      <div class="persona-block">
+        <h4>Goals</h4>
+        <ul class="persona-goals"></ul>
+      </div>
+      <div class="persona-block">
+        <h4>Pain points</h4>
+        <ul class="persona-pain"></ul>
+      </div>
+      <div class="persona-block">
+        <h4>Patterns</h4>
+        <ul class="persona-patterns"></ul>
+      </div>
+    </article>
+  </template>
+
+  <template id="tpl-contradiction-card">
+    <article class="contradiction-card">
+      <p class="contradiction-text"></p>
+      <p class="contradiction-explanation"></p>
+      <ul class="contradiction-evidence"></ul>
+    </article>
+  </template>
+
+  <template id="tpl-journey-stage">
+    <li class="journey-stage">
+      <div class="journey-stage-name"></div>
+      <div class="journey-body">
+        <p class="journey-row"><strong>Actions:</strong> <span class="journey-actions"></span></p>
+        <p class="journey-row"><strong>Thoughts &amp; emotions:</strong> <span class="journey-emotions"></span></p>
+        <p class="journey-row"><strong>Pain points:</strong> <span class="journey-pain"></span></p>
+        <p class="journey-row"><strong>Opportunity:</strong> <span class="journey-opportunity"></span></p>
+      </div>
+    </li>
+  </template>
+
+  <template id="tpl-flow-card">
+    <article class="flow-card">
+      <h3 class="flow-name"></h3>
+      <ol class="flow-steps"></ol>
+    </article>
+  </template>
+
+  <template id="tpl-opportunity-card">
+    <article class="opportunity-card">
+      <h3 class="opportunity-title"></h3>
+      <p class="opportunity-row"><strong>Direction:</strong> <span class="opportunity-direction"></span></p>
+      <p class="opportunity-row"><strong>Why:</strong> <span class="opportunity-rationale"></span></p>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

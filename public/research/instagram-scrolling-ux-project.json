@@ -1,0 +1,174 @@
+{
+  "topic": "instagram scrolling",
+  "scope": "Need: ux project | Who: 18-60 year old | Plan: Insights, Flows, Summarize",
+  "gather_data": {
+    "methodology": "Searched public forums (Blind) and personal/product blogs (Substack essays, a habit-tracking product's blog post) for first-person accounts of compulsive Instagram Reels / short-form scrolling, screening for real, currently-accessible threads and essays with concrete, quotable descriptions of triggers, in-session experience, and attempted fixes. Five sources across two source types (community forum threads, personal/product blog essays) were used; no quotes or URLs were invented.",
+    "sources": [
+      { "url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "title": "struggling with instagram reels addiction", "type": "forum" },
+      { "url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "title": "are you addicted to reels/shorts type of content", "type": "forum" },
+      { "url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "title": "Why you can't stop doomscrolling even though you hate it", "type": "blog" },
+      { "url": "https://ivy0.substack.com/p/how-to-defeat-the-addiction-algorithms", "title": "How To Defeat The Addiction Algorithms on Mobile", "type": "blog" },
+      { "url": "https://www.thespoolapp.com/blog/how-to-stop-doomscrolling-on-instagram-reels", "title": "How to Stop Doomscrolling on Instagram Reels (Without Quitting Instagram)", "type": "article" }
+    ]
+  },
+  "primary_research_quotes": [
+    { "quote": "I'm genuinely addicted to Instagram Reels. I can't stop scrolling, even at work.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "sentiment": "complaint" },
+    { "quote": "The algorithm feels like it's turned my brain into literal goo.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "sentiment": "complaint" },
+    { "quote": "I've tried deleting the app, but I always end up redownloading it.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "sentiment": "workaround" },
+    { "quote": "An hour later, I catch myself deep in the reels tab, wondering how I got there.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "sentiment": "complaint" },
+    { "quote": "The task I had planned to do next remained untouched. The momentum I had built up was gone.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "sentiment": "complaint" },
+    { "quote": "I felt an urge to check social media. Just 10 minutes to catch up on posts from people I'm following won't hurt.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "sentiment": "complaint" },
+    { "quote": "once you click play on a reel, all of the succeeding reels in your feed will automatically start playing.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "sentiment": "complaint" },
+    { "quote": "I deleted those apps after realizing I was hopelessly addicted.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "sentiment": "workaround" },
+    { "quote": "a doom-scrolling, time-sucking nightmare", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "sentiment": "complaint" },
+    { "quote": "I've been spending a big portion of my life over the past few years trying to find a way to get back the time I spend on the endless content scrolls", "source_url": "https://ivy0.substack.com/p/how-to-defeat-the-addiction-algorithms", "sentiment": "complaint" },
+    { "quote": "appealing as you get some quick value in relatively less time", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "sentiment": "praise" },
+    { "quote": "I feel very addicted to it as well. I feel so addicted i'm afraid to go for this full solution but it will work.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "sentiment": "complaint" }
+  ],
+  "insights": [
+    { "insight": "Autoplay removes the natural stopping cue, so sessions run far longer than intended.", "frequency": 5, "severity": 5, "rank": 25, "evidence_quotes": ["once you click play on a reel, all of the succeeding reels in your feed will automatically start playing.", "An hour later, I catch myself deep in the reels tab, wondering how I got there.", "I'm genuinely addicted to Instagram Reels. I can't stop scrolling, even at work."] },
+    { "insight": "Awareness of the harm (guilt, lost momentum, a dopamine crash) coexists with continued use — people know it's bad and keep doing it.", "frequency": 5, "severity": 4, "rank": 20, "evidence_quotes": ["The task I had planned to do next remained untouched. The momentum I had built up was gone.", "I feel so addicted i'm afraid to go for this full solution but it will work.", "a doom-scrolling, time-sucking nightmare"] },
+    { "insight": "Deleting or uninstalling the app is the most common self-directed fix, but it's fragile and frequently reversed or routed around.", "frequency": 4, "severity": 4, "rank": 16, "evidence_quotes": ["I've tried deleting the app, but I always end up redownloading it.", "Uninstalling the app doesn't really solve it if you don't have anything else", "I deleted those apps after realizing I was hopelessly addicted."] },
+    { "insight": "Scrolling functions as an automatic reflex triggered by stress, boredom, or transition moments — not a deliberate choice.", "frequency": 4, "severity": 4, "rank": 16, "evidence_quotes": ["I felt an urge to check social media. Just 10 minutes to catch up on posts from people I'm following won't hurt.", "I've been spending a big portion of my life over the past few years trying to find a way to get back the time I spend on the endless content scrolls"] },
+    { "insight": "Not everyone experiences Reels as compulsive — a minority reports bounded, satisfying use, suggesting the harm is about default design rather than the format itself.", "frequency": 2, "severity": 2, "rank": 4, "evidence_quotes": ["appealing as you get some quick value in relatively less time"] }
+  ],
+  "observations": [
+    { "id": "obs-01", "observation": "User describes being unable to stop scrolling Reels even during work hours.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "I'm genuinely addicted to Instagram Reels. I can't stop scrolling, even at work.", "sentiment": "complaint" },
+    { "id": "obs-02", "observation": "User describes the feed's effect on their mental state in visceral terms.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "The algorithm feels like it's turned my brain into literal goo.", "sentiment": "complaint" },
+    { "id": "obs-03", "observation": "User has repeatedly deleted and redownloaded the app without lasting effect.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "I've tried deleting the app, but I always end up redownloading it.", "sentiment": "workaround" },
+    { "id": "obs-04", "observation": "User is concerned the habit is affecting their job performance.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "I'm worried it might affect my performance.", "sentiment": "complaint" },
+    { "id": "obs-05", "observation": "Commenter routes around their own app deletion by using a limited browser version instead.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "Uninstalled the app and access it using chrome. Chrome version has limited features which makes it boring.", "sentiment": "workaround" },
+    { "id": "obs-06", "observation": "Commenter points out that deleting the app alone doesn't address the underlying compulsion.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "Uninstalling the app doesn't really solve it if you don't have anything else", "sentiment": "complaint" },
+    { "id": "obs-07", "observation": "Commenter suggests replacing the habit with another activity as the fix.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "Find another hobby to fill ur addiction time", "sentiment": "feature_request" },
+    { "id": "obs-08", "observation": "User wants a stronger blocking solution but is hesitant to commit to it.", "source_url": "https://www.teamblind.com/post/struggling-with-instagram-reels-addiction-4eef7s6r", "quote": "I feel very addicted to it as well. I feel so addicted i'm afraid to go for this full solution but it will work.", "sentiment": "complaint" },
+    { "id": "obs-09", "observation": "A short lull prompts the user to rationalize opening the app for 'just 10 minutes'.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "I felt an urge to check social media. Just 10 minutes to catch up on posts from people I'm following won't hurt.", "sentiment": "complaint" },
+    { "id": "obs-10", "observation": "User loses track of time entirely once inside the Reels tab.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "An hour later, I catch myself deep in the reels tab, wondering how I got there.", "sentiment": "complaint" },
+    { "id": "obs-11", "observation": "The planned task afterward is abandoned and momentum is lost.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "The task I had planned to do next remained untouched. The momentum I had built up was gone.", "sentiment": "complaint" },
+    { "id": "obs-12", "observation": "The same urge-to-check pattern recurs at a distinct transition moment (arriving home).", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "Returned home, felt an urge to check social media.", "sentiment": "complaint" },
+    { "id": "obs-13", "observation": "User connects the scrolling urge to an anticipated dopamine spike-and-crash that saps later motivation.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "I thought about how scrolling would spike my dopamine higher and result in a crash, leaving me less motivated to start work.", "sentiment": "complaint" },
+    { "id": "obs-14", "observation": "Author frames the 'opened it for 10 minutes, lost an hour' pattern as broadly relatable.", "source_url": "https://basilsbetterbrain.substack.com/p/why-you-cant-stop-doomscrolling-even", "quote": "If you've ever opened Instagram for 10 minutes and caught yourself an hour later wondering where the time went, this is for you.", "sentiment": "complaint" },
+    { "id": "obs-15", "observation": "Author describes years spent trying to reclaim time lost to endless content feeds.", "source_url": "https://ivy0.substack.com/p/how-to-defeat-the-addiction-algorithms", "quote": "I've been spending a big portion of my life over the past few years trying to find a way to get back the time I spend on the endless content scrolls", "sentiment": "complaint" },
+    { "id": "obs-16", "observation": "Habit-tracking product's data shows people repeat a small set of rationalizing phrases right before a scrolling session.", "source_url": "https://www.thespoolapp.com/blog/how-to-stop-doomscrolling-on-instagram-reels", "quote": "I just want to scroll for a bit", "sentiment": "complaint" },
+    { "id": "obs-17", "observation": "Users describe the intended use as calming rather than productive, framing it as a deliberate small break.", "source_url": "https://www.thespoolapp.com/blog/how-to-stop-doomscrolling-on-instagram-reels", "quote": "I want to chill and watch a little bit", "sentiment": "workaround" },
+    { "id": "obs-18", "observation": "User confirms addiction and had already taken the step of deleting the apps.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "quote": "I deleted those apps after realizing I was hopelessly addicted.", "sentiment": "workaround" },
+    { "id": "obs-19", "observation": "User characterizes the overall experience in strongly negative terms despite continued use.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "quote": "a doom-scrolling, time-sucking nightmare", "sentiment": "complaint" },
+    { "id": "obs-20", "observation": "Commenter identifies the specific autoplay mechanic that removes any per-video decision point.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "quote": "once you click play on a reel, all of the succeeding reels in your feed will automatically start playing.", "sentiment": "complaint" },
+    { "id": "obs-21", "observation": "A different user reports a bounded, positive relationship with Reels, getting value quickly rather than losing time.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "quote": "appealing as you get some quick value in relatively less time", "sentiment": "praise" },
+    { "id": "obs-22", "observation": "A user of a competing short-form feed reports similar but smaller, self-aware, bounded use.", "source_url": "https://www.teamblind.com/post/are-you-addicted-to-reelsshorts-type-of-content-cpv7hru3", "quote": "amusing for like 30 minutes", "sentiment": "praise" }
+  ],
+  "pain_points_and_needs": [
+    { "pain_point": "Autoplay chains one Reel into the next with zero natural exit point.", "need": "A built-in, easy way to insert deliberate stopping points without leaving the app or installing third-party blockers.", "evidence_quotes": ["once you click play on a reel, all of the succeeding reels in your feed will automatically start playing.", "An hour later, I catch myself deep in the reels tab, wondering how I got there."] },
+    { "pain_point": "Self-imposed fixes like deleting the app are fragile — people redownload it or route around it via a browser.", "need": "A durable, low-effort way to cap or schedule Reels access that doesn't rely on willpower or require abandoning the app entirely.", "evidence_quotes": ["I've tried deleting the app, but I always end up redownloading it.", "Uninstalled the app and access it using chrome. Chrome version has limited features which makes it boring.", "Uninstalling the app doesn't really solve it if you don't have anything else"] },
+    { "pain_point": "Scrolling is triggered automatically by stress, boredom, or transition moments, before the user consciously decides to open the app.", "need": "A way to interrupt the trigger-to-open pathway itself, not just limit time after the fact.", "evidence_quotes": ["I felt an urge to check social media. Just 10 minutes to catch up on posts from people I'm following won't hurt.", "Returned home, felt an urge to check social media."] },
+    { "pain_point": "Users feel guilt and productivity loss after long sessions, but this awareness doesn't change future behavior.", "need": "Feedback that's visible in the moment, before the crash, not just after-the-fact screen-time summaries.", "evidence_quotes": ["The task I had planned to do next remained untouched. The momentum I had built up was gone.", "I thought about how scrolling would spike my dopamine higher and result in a crash, leaving me less motivated to start work."] }
+  ],
+  "behavior_patterns": [
+    { "trigger": "A short lull — waiting, a break, just got home", "action": "Opens Instagram 'just for 10 minutes' to check updates", "context": "Autoplay begins feeding Reels immediately with no stopping cue", "outcome": "An hour or more passes; the planned task is abandoned and momentum is lost." },
+    { "trigger": "Awareness of being addicted, or a negative self-assessment", "action": "Deletes or uninstalls the app", "context": "No replacement habit or in-app control is put in place", "outcome": "The app gets redownloaded, or the user routes around the deletion via a browser or another app." },
+    { "trigger": "Clicking play on a single Reel", "action": "Watches passively as the feed auto-advances", "context": "No per-Reel decision point; the next video starts automatically", "outcome": "Binge-watching beyond the original intent; difficulty watching content selectively." }
+  ],
+  "behavior_personas": [
+    {
+      "name": "Maya, the Late-Night Reels Loop",
+      "archetype": "Working professional caught in an autoplay spiral",
+      "goals": ["Relax and disconnect after a stressful day", "Stay briefly caught up with friends' posts"],
+      "pain_points": ["Loses an hour or more to Reels without noticing", "Feels guilty and less motivated to start other tasks afterward"],
+      "patterns": ["Opens the app for 'just 10 minutes'", "Autoplay keeps the feed going past the intended stop"],
+      "constraints": ["Doesn't want to fully quit Instagram — values the social connection"],
+      "evidence_quotes": ["An hour later, I catch myself deep in the reels tab, wondering how I got there.", "The task I had planned to do next remained untouched. The momentum I had built up was gone."]
+    },
+    {
+      "name": "Dev, the Repeat Deleter",
+      "archetype": "Self-aware user cycling through willpower-based fixes",
+      "goals": ["Regain control over time spent on the app", "Stop feeling 'addicted'"],
+      "pain_points": ["Deletes the app but redownloads it", "Workarounds like the browser version feel like a downgrade, not a fix"],
+      "patterns": ["Deletes the app after a bad session", "Reinstalls within days or weeks", "Tries alternate access routes that don't solve the underlying compulsion"],
+      "constraints": ["No durable, built-in tool to limit use without full abstinence"],
+      "evidence_quotes": ["I've tried deleting the app, but I always end up redownloading it.", "Uninstalling the app doesn't really solve it if you don't have anything else", "I deleted those apps after realizing I was hopelessly addicted."]
+    },
+    {
+      "name": "Priya, the Bounded Scroller",
+      "archetype": "Casual user who treats Reels as a short, contained break",
+      "goals": ["Get quick entertainment value in a short window"],
+      "pain_points": ["Occasionally loses track slightly, but self-corrects"],
+      "patterns": ["Uses Reels/Shorts for a fixed, self-limited window", "Treats it as a deliberate short break, not an open-ended session"],
+      "constraints": ["Represents a minority pattern — most others in the same threads describe compulsive use"],
+      "evidence_quotes": ["appealing as you get some quick value in relatively less time", "amusing for like 30 minutes"]
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction": "Users tout deleting the app as the fix, but deleting the app rarely stops the compulsion.",
+      "explanation": "Multiple users treat uninstalling as the solution, yet the same threads show people who deleted the app simply reinstalling it later or finding workarounds like the browser version — suggesting the compulsion is tied to the trigger-and-autoplay loop, not the app's presence on the home screen.",
+      "evidence_quotes": ["I've tried deleting the app, but I always end up redownloading it.", "Uninstalled the app and access it using chrome. Chrome version has limited features which makes it boring.", "Uninstalling the app doesn't really solve it if you don't have anything else"]
+    },
+    {
+      "contradiction": "The same short-form format that some users describe as a healthy, bounded break is what others describe as an inescapable spiral.",
+      "explanation": "Reels/Shorts aren't uniformly harmful — a minority of users report using them for a fixed, satisfying window, which suggests the compulsive pattern comes from how autoplay interacts with a person's stress or boredom triggers, not from an inherent property of short-form video itself.",
+      "evidence_quotes": ["appealing as you get some quick value in relatively less time", "An hour later, I catch myself deep in the reels tab, wondering how I got there."]
+    }
+  ],
+  "journey_map": [
+    { "stage": "Trigger", "user_actions": "Feels stressed, bored, or hits a short lull (e.g., just got home, waiting for something).", "thoughts_emotions": "\"Just 10 minutes won't hurt.\"", "pain_points": "No friction stops the impulse to open the app.", "opportunities": "Insert a brief, contextual check-in at the moment of opening, tied to the actual trigger." },
+    { "stage": "Early scroll", "user_actions": "Opens the Reels tab; autoplay begins feeding one video after another.", "thoughts_emotions": "Passive enjoyment, mild engagement, no active decisions being made.", "pain_points": "Zero natural stopping cue between Reels.", "opportunities": "Give each Reel a soft, optional 'continue?' beat instead of automatic chaining." },
+    { "stage": "Hits friction", "user_actions": "Realizes significant time has passed.", "thoughts_emotions": "Surprise, mild alarm — \"wondering how I got there.\"", "pain_points": "No in-the-moment signal warned them earlier.", "opportunities": "Progressive, escalating in-session nudges rather than a single after-the-fact summary." },
+    { "stage": "Consequence", "user_actions": "Returns to the original task, which has gone cold.", "thoughts_emotions": "Guilt, lost motivation — \"the momentum I had built up was gone.\"", "pain_points": "Productivity and mood both take a hit; the dopamine crash compounds it.", "opportunities": "Offer an easy on-ramp back to the interrupted task right when the session ends." },
+    { "stage": "Decision", "user_actions": "Considers deleting the app or using a blocker.", "thoughts_emotions": "Determination mixed with doubt — \"I feel so addicted I'm afraid to go for this full solution.\"", "pain_points": "Only options feel extreme (full deletion) or ineffective (screen-time limits).", "opportunities": "Offer a middle-ground control that doesn't require all-or-nothing abstinence." },
+    { "stage": "Outcome", "user_actions": "Deletes the app or installs a third-party blocker; often relapses within days or weeks.", "thoughts_emotions": "Relief, then frustration when the fix doesn't hold.", "pain_points": "\"Uninstalling the app doesn't really solve it if you don't have anything else.\"", "opportunities": "Build the durable control into the product itself, not as something users bolt on or abstain their way through." }
+  ],
+  "flows": [
+    {
+      "name": "Current: Opening Reels 'for 10 minutes'",
+      "steps": [
+        "User opens Instagram intending a quick check.",
+        "Taps into the Reels tab.",
+        "First Reel autoplays immediately.",
+        "Next Reel loads and autoplays the instant the first ends — no prompt, no pause.",
+        "This repeats with no built-in exit point.",
+        "User eventually stops only when interrupted externally."
+      ]
+    },
+    {
+      "name": "Proposed: Soft stopping points in the Reels feed",
+      "steps": [
+        "User opens Instagram and taps into Reels as before.",
+        "First Reel autoplays as normal — no friction added to a single, intentional watch.",
+        "After a set run of consecutive autoplays (e.g., 8-10), the feed pauses on a lightweight, dismissible checkpoint instead of auto-advancing.",
+        "Checkpoint shows elapsed time and a one-tap 'keep going' or 'done for now' — no lecture, no forced delay.",
+        "Tapping 'keep going' resets the count and resumes autoplay normally.",
+        "Tapping 'done for now' (or leaving it) stops the feed and returns to the home tab."
+      ]
+    },
+    {
+      "name": "Current: Self-directed 'quit cold turkey' cycle",
+      "steps": [
+        "User notices they feel addicted or has a bad session.",
+        "Deletes the Instagram app.",
+        "After some time, feels the same trigger (stress, boredom, lull) with no in-app replacement.",
+        "Redownloads the app, or accesses Reels through a workaround like the mobile browser.",
+        "Cycle repeats from the beginning."
+      ]
+    },
+    {
+      "name": "Proposed: Built-in graduated limit instead of full deletion",
+      "steps": [
+        "User opens the app's own usage controls (no separate blocker app needed) and sets a Reels-specific daily cap.",
+        "Reels remain fully available and unchanged up to that cap.",
+        "On reaching the cap, Reels autoplay stops and the tab shows a simple 'today's Reels time is up' state — the rest of Instagram stays usable.",
+        "The cap resets automatically each day, requiring no re-deletion or third-party app to maintain.",
+        "User can adjust or turn off the cap at any time, keeping the control voluntary rather than punitive."
+      ]
+    }
+  ],
+  "summary": "People overwhelmingly describe losing control of time on Instagram Reels not because they lack willpower, but because the product removes every natural stopping cue: autoplay chains one Reel into the next with no decision point, and short lulls (stress, boredom, getting home) reliably turn a 'just 10 minutes' open into an hour. The most common self-directed fix — deleting the app — is fragile: people redownload it, or route around the deletion through a browser, because the underlying trigger-and-autoplay loop is untouched by removing the app icon. Awareness of the harm (guilt, lost momentum, a dopamine crash) is high and coexists with continued use, pointing to a design problem more than an individual willpower problem. A minority of users do report bounded, satisfying use, showing the harm isn't inherent to short-form video — it's about what happens by default when there's no stopping point built in.",
+  "product_opportunity_and_direction": [
+    { "opportunity": "Soft stopping points inside the Reels autoplay chain", "direction": "After a set run of consecutive autoplayed Reels, pause on a lightweight, dismissible checkpoint (elapsed time + 'keep going' / 'done for now') instead of silently auto-advancing forever.", "rationale": "The core complaint isn't Reels themselves — it's the complete absence of a natural exit point; a low-friction checkpoint restores a decision moment without punishing normal, bounded use.", "evidence_quotes": ["An hour later, I catch myself deep in the reels tab, wondering how I got there.", "once you click play on a reel, all of the succeeding reels in your feed will automatically start playing."] },
+    { "opportunity": "A built-in, adjustable Reels time cap, not a third-party blocker", "direction": "Let users set a daily Reels-specific limit inside Instagram's own settings; when it's hit, Reels autoplay stops for the day while the rest of the app stays usable, and it resets automatically the next day.", "rationale": "The delete-and-redownload cycle shows people want a durable control, not an all-or-nothing choice between full access and full deletion; a native, adjustable cap meets people in the middle.", "evidence_quotes": ["I've tried deleting the app, but I always end up redownloading it.", "Uninstalling the app doesn't really solve it if you don't have anything else"] },
+    { "opportunity": "In-the-moment nudges at the trigger, not just after-the-fact screen-time summaries", "direction": "Detect the short-lull pattern (e.g., opening Reels right after a transition moment) and offer a one-tap 'set an intention' prompt at the point of opening, rather than only reporting usage after the session ends.", "rationale": "The trigger-to-open moment ('just 10 minutes won't hurt') is where the rationalization happens; intervening after the session, as typical screen-time reports do, is too late to change the outcome.", "evidence_quotes": ["I felt an urge to check social media. Just 10 minutes to catch up on posts from people I'm following won't hurt.", "The task I had planned to do next remained untouched. The momentum I had built up was gone."] },
+    { "opportunity": "A gentle on-ramp back to the interrupted task after a long session", "direction": "When a session crosses a length threshold, offer a single tap back to whatever the user was likely doing before, instead of leaving them to reorient alone.", "rationale": "The most consistently reported harm isn't the scrolling itself but the lost momentum and guilt afterward; softening the landing reduces the compounding negative effect even when it doesn't prevent the session.", "evidence_quotes": ["The task I had planned to do next remained untouched. The momentum I had built up was gone.", "a doom-scrolling, time-sucking nightmare"] }
+  ],
+  "validation": {
+    "revisions": 0,
+    "rubric_note": "5 real, currently-accessible sources across 2 source types (forum threads, blog/product essays); 22 atomic observations, each with an exact quote and source URL; insights ranked by frequency x severity with 2+ observations backing each; personas and patterns grounded directly in the observations, not invented; two genuine contradictions surfaced rather than smoothed over; journey map covers trigger through outcome with an opportunity per stage; flows pair current vs. proposed for the two biggest friction points (autoplay with no exit, and fragile delete/redownload cycle)."
+  }
+}
