@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "task-management-app-abandonment",
+    "topic": "Why do users abandon task management apps after onboarding?",
+    "scope": "General consumer task management / to-do apps (mobile + web), first 30 days of use.",
+    "createdAt": "2026-09-22",
+    "figjamUrl": "https://www.figma.com/board/o2rbCXoWEFbtzLIl0a87S6"
+  },
+  {
+    "slug": "instagram-scrolling-habit",
+    "topic": "Why do people develop a compulsive Instagram scrolling habit?",
+    "scope": "General Instagram users; habitual/compulsive scrolling and Reels consumption on mobile.",
+    "createdAt": "2026-09-22",
+    "figjamUrl": "https://www.figma.com/board/eFC7pp4epEMUWOuFTay6tr"
+  },
+  {
+    "slug": "instagram-scrolling-ux-project",
+    "topic": "instagram scrolling",
+    "scope": "Need: ux project | Who: 18-60 year old | Plan: Insights, Flows, Summarize",
+    "createdAt": "2026-09-23",
+    "figjamUrl": "https://www.figma.com/board/fDqXCSSotOb6KjLYz8zniH/Instagram-Scrolling"
+  }
+]
